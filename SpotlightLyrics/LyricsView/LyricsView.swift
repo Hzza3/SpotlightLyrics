@@ -84,7 +84,7 @@ open class LyricsView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
     private func commonInit() {
         register(LyricsCell.self, forCellReuseIdentifier: "LyricsCell")
-        separatorStyle = .none
+        separatorStyle = .singleLine
         clipsToBounds = true
         
         dataSource = self
@@ -94,7 +94,7 @@ open class LyricsView: UITableView, UITableViewDataSource, UITableViewDelegate {
     }
     
     // MARK: UITableViewDataSource
-
+    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return lyricsViewModels.count
     }
@@ -107,6 +107,7 @@ open class LyricsView: UITableView, UITableViewDataSource, UITableViewDelegate {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = dequeueReusableCell(withIdentifier: "LyricsCell", for: indexPath) as! LyricsCell
         cell.update(with: lyricsViewModels[indexPath.row])
+        cell.backgroundColor = UIColor.clear
         return cell
     }
     
@@ -148,26 +149,52 @@ open class LyricsView: UITableView, UITableViewDataSource, UITableViewDelegate {
             return
         }
         
-        guard let index = lyrics.index(where: { $0.time >= time }) else {
-            // when no lyric is before the time passed in means scrolling to the first
+        guard lyrics.count != 0 else { return }
+        
+        guard let index = lyrics.index(where: {$0.time >= time}) else {
+            scrollToRow(at: IndexPath(row: 0, section: 0), at: .middle , animated: animated)
+            return
+        }
+        
+        if index == 0 {
             if (lyricsViewModels.count > 0) {
-                scrollToRow(at: IndexPath(row: 0, section: 0), at: .middle, animated: animated)
+                lyricsViewModels[index].highlighted = true
+                lastIndex = 0
             }
-            return
+            
         }
-        
-        guard lastIndex == nil || index - 1 != lastIndex else {
-            return
-        }
-        
-        if let lastIndex = lastIndex {
-            lyricsViewModels[lastIndex].highlighted = false
-        }
-        
-        if index > 0 {
-            lyricsViewModels[index - 1].highlighted = true
+        if index >= 1 && index != lastIndex {
+            lyricsViewModels[index - 1].highlighted = false
+            lyricsViewModels[index].highlighted = true
             scrollToRow(at: IndexPath(row: index - 1, section: 0), at: .middle, animated: animated)
-            lastIndex = index - 1
+            lastIndex = index
         }
+        
+        
+        //        guard let index = lyrics.index(where: { $0.time >= time }) else {
+        //            // when no lyric is before the time passed in means scrolling to the first
+        //            if (lyricsViewModels.count > 0) {
+        //                scrollToRow(at: IndexPath(row: 0, section: 0), at: .middle , animated: animated)
+        //            }
+        //            print("return 1")
+        //            return
+        //        }
+        
+        //        guard lastIndex == nil || index - 1 != lastIndex else {
+        //            print("return 2")
+        //            return
+        //        }
+        ////
+        //        if let lastIndex = lastIndex {
+        //            print("return 3")
+        //            lyricsViewModels[lastIndex].highlighted = false
+        //        }
+        
+        //        if index > 0 {
+        //            print("return 4")
+        //            lyricsViewModels[index - 1].highlighted = true
+        //            scrollToRow(at: IndexPath(row: index - 1, section: 0), at: .middle, animated: animated)
+        //            lastIndex = index - 1
+        //        }
     }
 }
