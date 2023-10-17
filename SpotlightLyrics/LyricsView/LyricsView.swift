@@ -15,7 +15,7 @@ open class LyricsView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
     private var lyricsViewModels: [LyricsCellViewModel] = []
     
-    private var lastIndex: Int? = nil
+    public var lastIndex: Int? = nil
     
     private(set) public var timer: LyricsViewTimer = LyricsViewTimer()
     
