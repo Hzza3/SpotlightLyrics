@@ -134,7 +134,7 @@ public class LyricsParser {
     private func parseLyric(line: String) -> [LyricsItem] {
         var cLine = line
         var items : [LyricsItem] = []
-        while(cLine.hasPrefix("[")) {
+        while(cLine.hasPrefix("[") || cLine.hasPrefix("")) {
             guard let closureIndex = cLine.range(of: "]")?.lowerBound else {
                 break
             }
